@@ -1,10 +1,8 @@
 import cv2
 import pytesseract
 import openai
-import numpy as np
 import os
-import re
-from dotenv import load_dotenv
+
 
 
 def get_img_text(img):
@@ -45,19 +43,3 @@ def get_products(ticket_text):
     valores = response["choices"][0]["text"]
 
     return valores
-
-# Programa
-
-
-load_dotenv()
-
-# Loading image using OpenCV
-img = cv2.imread('./img/ticket0.JPEG')
-# Reading image using OCR
-text = get_img_text(img)
-
-print(text)
-
-# Retrieving products from the image text
-products = get_products(text)
-print(products)
