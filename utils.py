@@ -3,9 +3,10 @@ import pytesseract
 import openai
 import os
 
+def get_img_text(imgpath):
 
+    img = cv2.imread(imgpath)
 
-def get_img_text(img):
     # Convert the image to grayscale
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     # creating Binary image by selecting proper threshold
@@ -27,7 +28,6 @@ def generate_prompt(text):
     return f'Identify from this purchase ticket all the items. The ticket is between two hashtag marks that define the start and end of the ticket. All the items must be returned in JSON format with the attributes "quatinty", "item", "price". The ticket is in catalan or spanish. :\nSTART ###\n{text}\n### END\n";'
 
 
-
 def get_products(ticket_text):
     akey = os.getenv("OPENAI_SKEY")
     openai.api_key = akey
@@ -43,3 +43,28 @@ def get_products(ticket_text):
     valores = response["choices"][0]["text"]
 
     return valores
+
+def allowed_file(imgstream):
+
+    valid = True
+    extvalidas = [".jpg", ".jpeg", ".png"]
+
+    fpath = os.path.splitext(imgstream.filename)
+    fext = (fpath[len(fpath)-1]).lower()
+
+    # Comprobar extension
+    try:
+        if extvalidas.index(fext) < 0:
+            print("Not in ext")
+            valid = False
+    except:
+        print("Wrong ext")
+        valid = False
+
+
+    # imgstream.filename
+    if imgstream.content_length > 52428800:
+        print("File size bigger")
+        valid = False
+
+    return valid

@@ -1,39 +1,22 @@
 from flask import Flask, jsonify, request
 from flask_cors import cross_origin
 from dotenv import load_dotenv
-import app
+import utils
 import os
 
 server = Flask(__name__)
-load_dotenv()
+server.config['UPLOAD_FOLDER'] = './img/'
 
+load_dotenv()
 
 @server.route('/', methods=['POST'])
 @cross_origin(origin=os.getenv("APP_CORSSACCES_URL"))
 def retrieve():
 
-    # f = open("./file.txt", "w")
-    print(request.get_json())
-    print(request)
-    # f.write(jsonify(request.data))
-    # f.close()
+    # print("END")
 
-    # data_data = request.get_data()
-    # print("DATA")
-    # for key, value in data_data.items():
-    #     print(key, value)
-
-    form_data = request.form
-    print("FORM")
-    for key, value in form_data.items():
-        print(key, value)
-
-    file_data = request.files
-    print("FILES")
-    for key, value in file_data.items():
-        print(key, value)
-
-    print("END")
+    # img = form_data["image"]
+    # return print(type(img))
 
     response = {
         'status': 1,
@@ -49,28 +32,31 @@ def retrieve():
         return jsonify(response)
 
     # image retrieve
-    # images = UploadSet("images", IMAGES)
-    # if "image" in request.files:
-    #     filename = images.save(request.files["image"])
-    #     print(filename)
-    # print("No image file found")
+    img_stream = request.files.get("image")
+    filename = img_stream.filename
+    filepath = os.path.join(server.config['UPLOAD_FOLDER'], filename)
 
-    # img = request.files['image']
-    # print(img)
-    # file_size = img.content_length
-    # print(f'File size: {file_size} bytes')
+    if not img_stream or filename == '' or not utils.allowed_file(img_stream):
+        response['status'] = 0
+        response['msg'] = 'Error file'
+        return jsonify(response)
+    
+    # todo ok save the file
+    img_stream.save(filepath)
 
-    # # Reading image using OCR
-    # text = app.get_img_text(img)
+    # Reading image using OCR
+    text = utils.get_img_text(filepath)
 
-    # print(text)
-
-    # # Retrieving products from the image text
-    # data = app.get_products(text)
-    # print(data)
+    # Retrieving products from the image text
+    data = utils.get_products(text)
 
     response['msg'] = 'OK'
-    response['data'] = {}
+    response['data'] = {
+        "text": text,
+        "items": data
+    }
+
+    os.remove(filepath)
 
     return jsonify(response)
 
