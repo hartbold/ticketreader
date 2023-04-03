@@ -1,0 +1,20 @@
+<form action="{% url 'grocery:store' storage.id %}" method="post">
+    {% csrf_token %}
+    <fieldset>
+        <legend>
+            <h1>{{ storage.name }}</h1>
+        </legend>
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        
+        <label for="name">Nou producte</label>
+        <input id="name" type="text" name="name" maxlength="100"/>
+
+    </fieldset>
+    <input type="submit" value="Afegeix"/>
+</form>
+
+<ul>
+    {% for item in storage.item_set.all %}
+    <li>{{ item }}</li>
+    {% endfor %}
+</ul>
