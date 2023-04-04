@@ -3,15 +3,23 @@ from time import timezone
 from django.db import models
 from django.utils.timezone import now
 
+from django.contrib.auth.models import User
+
 
 # Create your models here.
 
-
 class Storage(models.Model):
     name = models.CharField(max_length=100)
+    users = models.ManyToManyField(User)
 
     def __str__(self) -> str:
         return self.name
+    
+    '''
+class UserStorage(models.Model):
+    storage = models.ForeignKey(Storage, on_delete=models.RESTRICT)
+    user = models.ForeignKey(User, on_delete=models.RESTRICT, null=True, default=None )
+    '''
 
 
 class Item(models.Model):
@@ -32,7 +40,8 @@ class Item(models.Model):
         (UNIT_OTHER, 'Altres'),
     ]
 
-    storage = models.ForeignKey(Storage, on_delete=models.CASCADE)
+    storage = models.ForeignKey(Storage, on_delete=models.RESTRICT)
+    user = models.ForeignKey(User, on_delete=models.RESTRICT, null=True, default=None)
     name = models.CharField(max_length=200)
     amount = models.IntegerField(default=0)
     unit = models.CharField(max_length=2, choices=UNIT_CHOICES, default=UNIT_OTHER)
@@ -42,7 +51,8 @@ class Item(models.Model):
 
 
 class Ticket(models.Model):
-    storage = models.ForeignKey(Storage, on_delete=models.CASCADE)
+    storage = models.ForeignKey(Storage, on_delete=models.RESTRICT)
+    user = models.ForeignKey(User, on_delete=models.RESTRICT, null=True, default=None)
     name = models.CharField(max_length=100)
     total = models.BinaryField()
     processedText = models.CharField(max_length=5000)

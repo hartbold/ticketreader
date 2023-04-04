@@ -1,3 +1,7 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'grocery/style.css' %}">
+
 {% if latest_storage_list %}
     <ul>
     {% for storage in latest_storage_list %}
