@@ -30,11 +30,13 @@ class Item(models.Model):
     UNIT_PACK   = "PK"
     UNIT_LITRE  = "LI"
     UNIT_OTHER  = "OT"
+    UNIT_PIECES = "PI"
 
     UNIT_CHOICES = [
+        (UNIT_UNIT, 'Unitats'),
+        (UNIT_PIECES, 'Peces'),
         (UNIT_KILO, 'Kilos'),
         (UNIT_GRAM, 'Grams'),
-        (UNIT_UNIT, 'Unitats'),
         (UNIT_PACK, 'Paquets'),
         (UNIT_LITRE, 'Litres'),
         (UNIT_OTHER, 'Altres'),

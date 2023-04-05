@@ -131,3 +131,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/'
 START_URL = '/grocery'
+UPLOAD_PATH = os.path.join(BASE_DIR, "ticket_tmp");
