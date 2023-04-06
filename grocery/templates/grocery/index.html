@@ -1,7 +1,7 @@
-{% load static %}
+{% include "grocery/head.html" %}
 
-<link rel="stylesheet" href="{% static 'grocery/css/style.css' %}">
 
+<div class="container">
 {% if latest_storage_list %}
     <ul>
     {% for storage in latest_storage_list %}
@@ -11,3 +11,6 @@
 {% else %}
     <p>No storage is available.</p>
 {% endif %}
+</div>
+
+{% include "grocery/foot.html" %}

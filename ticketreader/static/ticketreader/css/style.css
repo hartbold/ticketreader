@@ -1,0 +1,3 @@
+.container{
+    padding: 5rem calc(var(--bs-gutter-x) * .5);
+}

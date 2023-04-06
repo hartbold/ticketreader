@@ -1,3 +1,4 @@
+import numpy as np
 import cv2
 import pytesseract
 import openai
@@ -9,8 +10,30 @@ def get_img_text(imgpath):
 
     img = cv2.imread(imgpath)
 
+
+    #  img = cv2.resize(img, None, fx=1.2, fy=1.2, interpolation=cv2.INTER_CUBIC)
+    img = cv2.resize(img, None, fx=2, fy=2)
+
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    kernel = np.ones((1,1), np.uint8)
+    #  img = cv2.dilate(img, kernel, iterations=1)
+    #  img = cv2.erode(img, kernel, iterations=1)
+
+    #  img = cv2.threshold(cv2.medianBlur(img, 3), 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+
+    cv2.imwrite(imgpath, img)
+
+    # for psm in range(6,13+1):
+    #    config = '--oem 3 --psm %d' % psm
+    #    txt = pytesseract.image_to_string(img, config = config, lang='cat')
+    #    print('psm ', psm, ':',txt)
+
+    config = '--oem 3 --psm %d' % 6
+    txt = pytesseract.image_to_string(img, config = config, lang='cat')
+
     # Convert the image to grayscale
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     # creating Binary image by selecting proper threshold
     # binary_image = cv2.threshold(gray ,130,255,cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
     # Inverting the image
@@ -20,8 +43,8 @@ def get_img_text(imgpath):
     # processed_img = cv2.erode(inverted_bin, kernel, iterations=1)
     # processed_img = cv2.dilate(processed_img, kernel, iterations=1)
     # REad text
-    text = pytesseract.image_to_string(gray)
-    return text
+    # text = pytesseract.image_to_string(gray)
+    return txt
 
 def generate_prompt(text):
     # @TODO optimizar el prompt para que no gaste tantos tokens

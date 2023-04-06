@@ -9,10 +9,12 @@ from django.core.files.storage import default_storage
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.datastructures import MultiValueDictKeyError
+from django.http import JsonResponse
 
 from . import utils
 
-from ticketreader.settings import UPLOAD_PATH
+from .settings import UPLOAD_PATH_TICKETS
 # from django.template import loader
 
 from .models import Storage, Item
@@ -42,37 +44,40 @@ def store(request, storage_id):
 
 
 @login_required
+def upload(request, storage_id):
+    storage = get_object_or_404(Storage, pk=storage_id)
+    if request.method == 'POST':
+
+        try:
+            img_stream = request.FILES['croppedImage']
+
+            # print(request.FILES, request.POST, img_stream)
+            #  img_stream = base64.b64encode(img_stream).decode()
+            filename = img_stream.name
+            filepath = os.path.join(UPLOAD_PATH_TICKETS, filename)
+
+            if not img_stream or filename == '' or not utils.allowed_file(img_stream):
+                return JsonResponse({"error_message": "No s'ha pogut carregar la imatge"}, safe=False)
+
+            # todo ok save the file
+            with default_storage.open(filepath, 'wb+') as destination:
+                for chunk in img_stream.chunks():
+                    destination.write(chunk)
+
+            # Reading image using OCR
+            text = utils.get_img_text(filepath)
+
+            print(text)
+
+        except MultiValueDictKeyError:
+            return JsonResponse({"error_message": "MultiValueDictKeyError"}, safe=False)
+
+    return JsonResponse({"error_message": text.replace("\n", "<br>")}, safe=False)
+
+
+@login_required
 def ticket(request, storage_id):
     storage = get_object_or_404(Storage, pk=storage_id)
-
-    if request.method == 'POST':
-        # try:
-
-        img_stream = request.FILES['ticket']
-        print(img_stream);
-        filename = img_stream.name
-        filepath = os.path.join(UPLOAD_PATH, filename)
-
-        if not img_stream or filename == '' or not utils.allowed_file(img_stream):
-            return render(request, "grocery/ticket.html", {"storage": storage, "error_message": "No s'ha pogut carregar la imatge"})
-
-        # todo ok save the file
-        with default_storage.open(filepath, 'wb+') as destination:
-            for chunk in img_stream.chunks():
-                destination.write(chunk)
-
-        # Reading image using OCR
-        text = utils.get_img_text(filepath)
-
-        print(text)
-
-        # Retrieving products from the image text
-        # data = utils.get_products(text)
-
-        # os.remove(filepath)
-
-        # except (KeyError):
-        # return render(request, "grocery/detail.html", {"storage": storage,"unit_choices": Item.UNIT_CHOICES, "error_message": "El producte no te nom i no s'ha introduït"})
 
     return render(request, "grocery/ticket.html", {"storage": storage})
 

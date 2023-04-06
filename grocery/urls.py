@@ -12,5 +12,5 @@ urlpatterns = [
     # path("<int:pk>/", views.DetailView.as_view(), name="detail"),
     path("<int:storage_id>/store", views.store, name="store"),
     path("<int:storage_id>/ticket", views.ticket, name="ticket"),
-
+    path("<int:storage_id>/upload", views.upload, name="upload"),
 ]

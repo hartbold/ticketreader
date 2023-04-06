@@ -1,54 +1,58 @@
-<form action="{% url 'grocery:store' storage.id %}" method="post">
-    {% csrf_token %}
-    <fieldset>
-        <legend>
-            <h1>{{ storage.name }}</h1>
-        </legend>
-        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
-        <div>
-
-            <div>
-                <label for="name">Nou producte</label>
-                <input id="name" type="text" name="name" maxlength="100" required />
-            </div>
+{% include "grocery/head.html" %}
+<div class="container">
+    <form action="{% url 'grocery:store' storage.id %}" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend>
+                <h1>{{ storage.name }}</h1>
+            </legend>
+            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
             <div>
-                <label for="amount">Quantitat</label>
-                <input id="amount" type="number" name="amount" />
+
+                <div>
+                    <label for="name">Nou producte</label>
+                    <input id="name" type="text" name="name" maxlength="100" required />
+                </div>
+
+                <div>
+                    <label for="amount">Quantitat</label>
+                    <input id="amount" type="number" name="amount" />
+                </div>
+
+                <div>
+                    <label for="unit"></label>
+                    <select title="Unitat" id="unit" name="unit">
+                        {% for unit in unit_choices %}
+                        <option value="{{unit.0}}">{{unit.1}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
             </div>
 
-            <div>
-                <label for="unit"></label>
-                <select title="Unitat" id="unit" name="unit">
-                    {% for unit in unit_choices %}
-                    <option value="{{unit.0}}">{{unit.1}}</option>
-                    {% endfor %}
-                </select>
-            </div>
+        </fieldset>
+        <input type="submit" value="Afegeix" />
+        <a class="btn" href="{% url 'grocery:ticket' storage.id %}" type="btn">Nou tiquet</a>
+    </form>
 
-        </div>
-
-    </fieldset>
-    <input type="submit" value="Afegeix" />
-    <a class="btn" href="{% url 'grocery:ticket' storage.id %}" type="btn">Nou tiquet</a>
-</form>
-
-<table>
-    <thead>
-        <tr>
-            <th>Ítem</th>
-            <th>Quantitat</th>
-            <th>Unitats</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in storage.item_set.all reversed %}
-        <tr>
-            <td>{{ item.name }}</td>
-            <td>{{ item.amount }}</td>
-            <td>{{ item.get_unit_display }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <table>
+        <thead>
+            <tr>
+                <th>Ítem</th>
+                <th>Quantitat</th>
+                <th>Unitats</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in storage.item_set.all reversed %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.amount }}</td>
+                <td>{{ item.get_unit_display }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% include "grocery/foot.html" %}

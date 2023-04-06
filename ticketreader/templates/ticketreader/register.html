@@ -1,24 +1,28 @@
-<form action="/register/" method="post">
-    {% csrf_token %}
-    <fieldset>
-        <legend>
-            <h1>Registra't</h1>
-        </legend>
-        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% include "ticketreader/head.html" %}
+<div class="container">
+    <form action="/register/" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend>
+                <h1>Registra't</h1>
+            </legend>
+            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-        <div>
-            <label for="username">Usuari</label>
-            <input id="username" type="text" name="username" maxlength="100" />
-        </div>
+            <div>
+                <label for="username">Usuari</label>
+                <input id="username" type="text" name="username" maxlength="100" />
+            </div>
 
-        <div>
-            <label for="password">Contrasenya</label>
-            <input id="password" type="password" name="password" maxlength="100" />
-        </div>
+            <div>
+                <label for="password">Contrasenya</label>
+                <input id="password" type="password" name="password" maxlength="100" />
+            </div>
 
-        <input type="submit" class="btn" value="Registra't" />
-        <a href="/" class="btn">Enrere</a>
+            <input type="submit" class="btn" value="Registra't" />
+            <a href="/" class="btn">Enrere</a>
 
-    </fieldset>
+        </fieldset>
 
-</form>
+    </form>
+</div>
+{% include "ticketreader/foot.html" %}
