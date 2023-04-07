@@ -49,12 +49,15 @@ def get_img_text(imgpath):
 def generate_prompt(text):
     # @TODO optimizar el prompt para que no gaste tantos tokens
     # return f'Identifica de el siguiente tiquet de compra los items y devuélvelos en un objeto json con los atributos: cantidad, nombre y precio. El ticket de compra empieza después de los hashtags "###" y termina con la misma marca.\n\nTicket de compra:\n###{text}\n###";'
-    return f'Identify from this purchase ticket all the items. The ticket is between two hashtag marks that define the start and end of the ticket. All the items must be returned in JSON format with the attributes "quatinty", "item", "price". The ticket is in catalan or spanish. :\nSTART ###\n{text}\n### END\n";'
+    # return f'Identify from this purchase ticket all the items. The ticket is between two hashtag marks that define the start and end of the ticket. All the items must be returned in JSON format with the attributes "quatinty", "item", "price". The ticket is in catalan or spanish. :\nSTART ###\n{text}\n### END\n";'
+    return f'Recupera els productes del tiquet en un objecte JSON amb les claus "producte", "quantitat" i "preu" per cada producte. Els productes poden vindre mal escrits, corregeix-los. El tiquet és:\n{text}'
 
 def get_products(ticket_text):
     akey = os.getenv("OPENAI_SKEY")
     openai.api_key = akey
+    openai.organization = os.getenv("OPENAI_ORGANIZATION")
 
+    '''
     response = openai.Completion.create(
         model=os.getenv("OPENAI_MODEL"),
         prompt=generate_prompt(ticket_text),
@@ -62,8 +65,16 @@ def get_products(ticket_text):
         max_tokens=2000,
         n=1,
     )
+    '''
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "Ets un interpret de text de tiquets de compra"},
+            {"role": "user", "content": generate_prompt(ticket_text)}
+        ],
+    )
 
-    valores = response["choices"][0]["text"]
+    valores = response["choices"][0]["message"]["content"]
 
     return valores
 

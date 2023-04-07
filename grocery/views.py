@@ -1,4 +1,5 @@
 import os
+import json
 
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, Http404, HttpResponseRedirect
@@ -46,6 +47,10 @@ def store(request, storage_id):
 @login_required
 def upload(request, storage_id):
     storage = get_object_or_404(Storage, pk=storage_id)
+
+    text = "Hi ha hagut un error";
+    items = []
+
     if request.method == 'POST':
 
         try:
@@ -66,20 +71,24 @@ def upload(request, storage_id):
 
             # Reading image using OCR
             text = utils.get_img_text(filepath)
-
             print(text)
+            productes = utils.get_products(text)
+            print(productes)
+            items = json.loads(productes)
+            print(items)
 
         except MultiValueDictKeyError:
             return JsonResponse({"error_message": "MultiValueDictKeyError"}, safe=False)
 
-    return JsonResponse({"error_message": text.replace("\n", "<br>")}, safe=False)
+# .replace("\n", "<br>")
+    return JsonResponse({"error_message": text, "items_processed": items }, safe=False)
 
 
 @login_required
 def ticket(request, storage_id):
     storage = get_object_or_404(Storage, pk=storage_id)
 
-    return render(request, "grocery/ticket.html", {"storage": storage})
+    return render(request, "grocery/ticket.html", {"storage": storage, "unit_choices": Item.UNIT_CHOICES})
 
 
 @method_decorator(login_required, name='dispatch')

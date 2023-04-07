@@ -12,6 +12,10 @@ window.onload = function () {
   var uploadedImageURL;
   var $error = $("#error");
   var $result = $("#result");
+  var $loadingframe = $("#loading-frame");
+  var $submit = $("input[type='submit']");
+  var $select = $("#select-units");
+  var $form_submit = $("#form-result");
 
   // Import image
   var inputImage = document.getElementById('inputImage');
@@ -46,6 +50,7 @@ window.onload = function () {
             'zoomable': false,
           });
           inputImage.value = null;
+          $submit.prop("disabled", false);
         } else {
           window.alert('Please choose an image file.');
         }
@@ -77,7 +82,15 @@ window.onload = function () {
 
   document.getElementById("form").addEventListener("submit", function (e) {
     e.preventDefault();
+
+    if (!cropper) {
+      return;
+    }
+
     cropper.getCroppedCanvas().toBlob(function (blob) {
+
+      $loadingframe.removeClass("d-none");
+
       var formData = new FormData();
       formData.append('croppedImage', new File([blob], 'tiquet.jpg', { type: 'image/jpeg' }));
       formData.append('csrfmiddlewaretoken', document.getElementsByName("csrfmiddlewaretoken")[0].value)
@@ -91,16 +104,38 @@ window.onload = function () {
 
           $result.html(e.error_message);
           $result.val(e.error_message);
-          $result.removeClass("d-none");
+          // $result.removeClass("d-none");
 
           // ok 
           cropper.destroy();
-          image.src = '';
+          image.src = '/ticket_tmp/tiquet.jpg';
+          $loadingframe.addClass("d-none");
+          $submit.prop("disabled", true);
+
+
+          var out = "<div><br></div>";
+          $.each(e.items_processed.productes, function (i, v) {
+            var select = $select[0].outerHTML;
+            out += "<div class='row-producto row mb-1'>"
+            out += "<div class='col-9 mb-2 mb-md-0 col-md-6'><input class='form-control' type='text' name='producte[" + i + "][name]' value='" + v.producte + "'/></div>"
+            out += "<div class='col-3 mb-2 mb-md-0 col-md-2 with-label'><label>#</label><input class='form-control' type='number' name='producte[" + i + "][amount]' value='" + v.quantitat + "'/></div>"
+            out += "<div class='col-5 col-md-2'>" + select.replace("name=''", "name='producte[" + i + "][unit]'") + "</div>"
+            out += "<div class='col-5 col-md-2 with-label'><label>€</label><input class='form-control' type='text' name='producte[" + i + "][price]' value='" + v.preu + "'/></div>"
+            out += "</div>";
+          });
+
+          out += "<input type='submit' class='mt-3 btn btn-sm btn-success mt-3' value='Desa els productes'/>"
+
+          $form_submit.removeClass("d-none");
+          $form_submit.append(out);
+
 
         },
         error: function (e) {
           $error.html(e.error_message);
-        }
+          $loadingframe.addClass("d-none");
+
+        },
       });
     });
 

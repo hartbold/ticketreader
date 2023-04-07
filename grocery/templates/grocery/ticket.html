@@ -1,20 +1,39 @@
 {% include "grocery/head.html" %}
 
+<div id="loading-frame" class="d-none"></div>
 <div class="container">
-<form id="form" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <div class="form-group">
-        <input id="inputImage" name="ticket" type="file" accept="image/*" />
-        <input type="submit" value="Envia" />
-    </div>
-    <label id="error" class="text-danger"></label>
-    <textarea id="result" class="d-none"></textarea>
-</form>
+    <form id="form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <input id="inputImage" class="form-control mb-3" name="ticket" type="file" accept="image/*" />
+            <a class="btn btn-primary btn-sm" href="{% url 'grocery:detail' storage.id %}">Torna</a>
+            <input type="submit" class="btn btn-sm btn-success" value="Envia" disabled />
+        </div>
+        <label id="error" class="text-danger"></label>
 
-<div class="img-container img-cropper">
-    <img id="image" />
-</div>
+        <div class="img-container img-cropper mt-4">
+            <img id="image" />
+        </div>
+
+        <textarea id="result" rows="10" name="raw-text" class="form-control mt-3 d-none"></textarea>
+        <div class="d-none">
+            <select name='' id="select-units" class="form-control">
+                {% for unit in unit_choices %}
+                <option value="{{unit.0}}">{{unit.1}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+
+    <form id="form-result" action="" method="post" class="d-none">
+        {% csrf_token %}
+        <input type="submit" class="btn btn-sm btn-success" value="Envia" disabled />
+    </form>
+
+    
 </div>
 
 {% include "grocery/foot.html" %}
 
+{% load static %}
+<script src="{% static 'grocery/js/main.js' %}"></script>

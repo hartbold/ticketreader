@@ -8,21 +8,21 @@
             </legend>
             {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-            <div>
+            <div class="row mb-4">
 
-                <div>
-                    <label for="name">Nou producte</label>
-                    <input id="name" type="text" name="name" maxlength="100" required />
+                <div class="col-md-6">
+                    <label for="name" class="form-label">Nou producte</label>
+                    <input id="name" class="form-control" type="text" name="name" maxlength="100" required />
                 </div>
 
-                <div>
-                    <label for="amount">Quantitat</label>
-                    <input id="amount" type="number" name="amount" />
+                <div class="col-md-3">
+                    <label for="amount" class="form-label">Quantitat</label>
+                    <input id="amount" class="form-control" type="number" name="amount" />
                 </div>
 
-                <div>
-                    <label for="unit"></label>
-                    <select title="Unitat" id="unit" name="unit">
+                <div class="col-md-3">
+                    <label for="unit" class="form-label">&nbsp;</label>
+                    <select title="Unitat" id="unit" class="form-control" name="unit">
                         {% for unit in unit_choices %}
                         <option value="{{unit.0}}">{{unit.1}}</option>
                         {% endfor %}
@@ -32,11 +32,12 @@
             </div>
 
         </fieldset>
-        <input type="submit" value="Afegeix" />
-        <a class="btn" href="{% url 'grocery:ticket' storage.id %}" type="btn">Nou tiquet</a>
+        <input type="submit" class="btn btn-sm btn-success" value="Afegeix producte" />
+        <a class="btn btn-sm btn-primary" href="{% url 'grocery:ticket' storage.id %}" type="btn">Nou tiquet</a>
     </form>
 
-    <table>
+    <div class="table-responsive">
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>Ítem</th>
@@ -54,5 +55,6 @@
             {% endfor %}
         </tbody>
     </table>
+</div>
 </div>
 {% include "grocery/foot.html" %}

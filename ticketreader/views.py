@@ -1,7 +1,6 @@
 
 from django.shortcuts import render
 
-from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth import authenticate, logout as auth_logout, login as auth_login
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied

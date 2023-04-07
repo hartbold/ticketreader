@@ -74,6 +74,10 @@ TEMPLATES = [
     },
 ]
 
+TEMPLATE_CONTEXT_PROCESSORS = [
+    'django.core.context_processors.request'
+]
+
 WSGI_APPLICATION = 'ticketreader.wsgi.application'
 
 
@@ -126,6 +130,7 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "ticketreader", "static"),
+    os.path.join(BASE_DIR, "ticket_tmp"),
 ]
 
 # Default primary key field type

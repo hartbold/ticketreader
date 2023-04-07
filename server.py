@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import cross_origin
 from dotenv import load_dotenv
-import utils
+import utils_old
 import os
 
 server = Flask(__name__)
@@ -36,7 +36,7 @@ def retrieve():
     filename = img_stream.filename
     filepath = os.path.join(server.config['UPLOAD_FOLDER'], filename)
 
-    if not img_stream or filename == '' or not utils.allowed_file(img_stream):
+    if not img_stream or filename == '' or not utils_old.allowed_file(img_stream):
         response['status'] = 0
         response['msg'] = 'Error file'
         return jsonify(response)
@@ -45,10 +45,10 @@ def retrieve():
     img_stream.save(filepath)
 
     # Reading image using OCR
-    text = utils.get_img_text(filepath)
+    text = utils_old.get_img_text(filepath)
 
     # Retrieving products from the image text
-    data = utils.get_products(text)
+    data = utils_old.get_products(text)
 
     response['msg'] = 'OK'
     response['data'] = {
