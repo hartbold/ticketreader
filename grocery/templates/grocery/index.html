@@ -1,16 +1,16 @@
 {% include "grocery/head.html" %}
 
-
 <div class="container">
-{% if latest_storage_list %}
-    <ul>
-    {% for storage in latest_storage_list %}
-        <li><a href="{% url 'grocery:detail' storage.id %}">{{ storage.name }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No storage is available.</p>
-{% endif %}
+    
+    {% if latest_storage_list %}
+    <div class="storages">
+        {% for storage in latest_storage_list %}
+    <h2><a href="{% url 'grocery:detail' storage.id %}">{{ storage.name }}</a></li>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No hi ha cap magatzem disponible.</p>
+    {% endif %}
 </div>
 
 {% include "grocery/foot.html" %}

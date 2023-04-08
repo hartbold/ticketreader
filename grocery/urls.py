@@ -13,4 +13,5 @@ urlpatterns = [
     path("<int:storage_id>/store", views.store, name="store"),
     path("<int:storage_id>/ticket", views.ticket, name="ticket"),
     path("<int:storage_id>/upload", views.upload, name="upload"),
+    path("<int:storage_id>/savetiquet", views.savetiquet, name="savetiquet"),
 ]

@@ -50,7 +50,7 @@ def generate_prompt(text):
     # @TODO optimizar el prompt para que no gaste tantos tokens
     # return f'Identifica de el siguiente tiquet de compra los items y devuélvelos en un objeto json con los atributos: cantidad, nombre y precio. El ticket de compra empieza después de los hashtags "###" y termina con la misma marca.\n\nTicket de compra:\n###{text}\n###";'
     # return f'Identify from this purchase ticket all the items. The ticket is between two hashtag marks that define the start and end of the ticket. All the items must be returned in JSON format with the attributes "quatinty", "item", "price". The ticket is in catalan or spanish. :\nSTART ###\n{text}\n### END\n";'
-    return f'Recupera els productes del tiquet en un objecte JSON amb les claus "producte", "quantitat" i "preu" per cada producte. Els productes poden vindre mal escrits, corregeix-los. El tiquet és:\n{text}'
+    return f'Recupera els productes del tiquet en un objecte JSON amb les claus "producte","nom_simplificat", "quantitat" i "preu" per cada producte. Els productes poden vindre mal escrits, corregeix-los a la clau "producte". El tiquet és:\n{text}'
 
 def get_products(ticket_text):
     akey = os.getenv("OPENAI_SKEY")

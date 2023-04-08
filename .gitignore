@@ -4,3 +4,5 @@ __pycache__/
 
 *.sqlite3
 ticket_tmp/
+
+grocery/static/grocery/css/bootstrap.min.css

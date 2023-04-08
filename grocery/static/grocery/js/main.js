@@ -16,6 +16,7 @@ window.onload = function () {
   var $submit = $("input[type='submit']");
   var $select = $("#select-units");
   var $form_submit = $("#form-result");
+  var $img_result = $("#img-result")
 
   // Import image
   var inputImage = document.getElementById('inputImage');
@@ -90,6 +91,8 @@ window.onload = function () {
     cropper.getCroppedCanvas().toBlob(function (blob) {
 
       $loadingframe.removeClass("d-none");
+      var body = document.getElementsByTagName("body")[0];
+      $(body).addClass("loading");
 
       var formData = new FormData();
       formData.append('croppedImage', new File([blob], 'tiquet.jpg', { type: 'image/jpeg' }));
@@ -108,7 +111,7 @@ window.onload = function () {
 
           // ok 
           cropper.destroy();
-          image.src = '/ticket_tmp/tiquet.jpg';
+          image.src = ''; // '/grocery/ticket_tmp/tiquet.jpg';
           $loadingframe.addClass("d-none");
           $submit.prop("disabled", true);
 
@@ -117,10 +120,11 @@ window.onload = function () {
           $.each(e.items_processed.productes, function (i, v) {
             var select = $select[0].outerHTML;
             out += "<div class='row-producto row mb-1'>"
-            out += "<div class='col-9 mb-2 mb-md-0 col-md-6'><input class='form-control' type='text' name='producte[" + i + "][name]' value='" + v.producte + "'/></div>"
-            out += "<div class='col-3 mb-2 mb-md-0 col-md-2 with-label'><label>#</label><input class='form-control' type='number' name='producte[" + i + "][amount]' value='" + v.quantitat + "'/></div>"
+            out += "<div class='col-12'><label>" + v.producte + "</label></div>";
+            out += "<div class='col-9 mb-2 mb-md-0 col-md-6'><input title='Producte' class='form-control' type='text' name='producte[" + i + "][name]' value='" + v.nom_simplificat + "'/></div>"
+            out += "<div class='col-3 mb-2 mb-md-0 col-md-2 with-label'><label>#</label><input title='Quantitat' class='form-control' type='number' name='producte[" + i + "][amount]' value='" + v.quantitat + "'/></div>"
             out += "<div class='col-5 col-md-2'>" + select.replace("name=''", "name='producte[" + i + "][unit]'") + "</div>"
-            out += "<div class='col-5 col-md-2 with-label'><label>€</label><input class='form-control' type='text' name='producte[" + i + "][price]' value='" + v.preu + "'/></div>"
+            out += "<div class='col-4 col-md-2 with-label'><label>€</label><input title='Preu' class='form-control' type='text' name='producte[" + i + "][price]' value='" + v.preu + "'/></div>"
             out += "</div>";
           });
 
@@ -129,11 +133,19 @@ window.onload = function () {
           $form_submit.removeClass("d-none");
           $form_submit.append(out);
 
+          $img_result.removeClass("d-none");
+
+          $(body).removeClass("loading");
+
+
 
         },
         error: function (e) {
           $error.html(e.error_message);
           $loadingframe.addClass("d-none");
+
+          $(body).removeClass("loading");
+
 
         },
       });

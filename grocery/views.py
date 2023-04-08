@@ -18,7 +18,7 @@ from . import utils
 from .settings import UPLOAD_PATH_TICKETS
 # from django.template import loader
 
-from .models import Storage, Item
+from .models import Storage, Item, Ticket, Product
 
 # Create your views here.
 
@@ -83,6 +83,39 @@ def upload(request, storage_id):
 # .replace("\n", "<br>")
     return JsonResponse({"error_message": text, "items_processed": items }, safe=False)
 
+@login_required
+def savetiquet(request, storage_id):
+    storage = get_object_or_404(Storage, pk=storage_id)
+    try:
+
+        if (not len(request.POST["producte"])):
+            raise KeyError
+        
+
+        tiquet = Ticket.objects.create(
+            user=request.user,
+            storage=storage,
+            processedText=request.POST['raw-text']
+        )
+        tiquet.save()
+
+
+        for i in request.POST["producte"]:
+            prod = Product.objects.create(
+                tiquet=tiquet.id
+            )
+            prod.save()
+
+        i = Item.objects.create(
+            storage=storage, user=request.user, name=request.POST["name"],
+            amount=int('0'+(request.POST['amount'])), unit=request.POST['unit'])
+        i.save()
+
+    except (KeyError):
+        return render(request, "grocery/detail.html", {"storage": storage, "unit_choices": Item.UNIT_CHOICES, "error_message": "El producte no te nom i no s'ha introduït"})
+
+    else:
+        return HttpResponseRedirect(url('grocery:detail', storage.id))
 
 @login_required
 def ticket(request, storage_id):

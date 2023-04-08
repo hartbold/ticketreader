@@ -130,7 +130,6 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "ticketreader", "static"),
-    os.path.join(BASE_DIR, "ticket_tmp"),
 ]
 
 # Default primary key field type
