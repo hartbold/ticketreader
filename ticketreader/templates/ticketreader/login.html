@@ -6,20 +6,20 @@
             <legend>
                 <h1>Accedeix</h1>
             </legend>
-            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+            {% if error_message %}<p class="text-danger">{{ error_message }}</p>{% endif %}
 
-            <div>
+            <div class="form-group">
                 <label for="username">Usuari</label>
-                <input id="username" type="text" name="username" maxlength="100" />
+                <input id="username" required class="form-control" type="text" name="username" maxlength="100" />
             </div>
 
-            <div>
+            <div class="form-group mb-4">
                 <label for="password">Contrasenya</label>
-                <input id="password" type="password" name="password" maxlength="100" />
+                <input id="password" required class="form-control" type="password" name="password" maxlength="100" />
             </div>
 
-            <input type="submit" class="btn" value="Entra" />
-            <a href="/register" class="btn">Registra't</a>
+            <input type="submit" class="btn btn-sm btn-success" value="ENTRA" />
+            <a href="/register" class="btn btn-sm btn-primary">REGISTRA'T</a>
 
         </fieldset>
 
