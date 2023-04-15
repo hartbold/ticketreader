@@ -1,9 +1,12 @@
 import os
+import re
 import json
+
+from urllib.parse import unquote
 
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, Http404, HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse_lazy # reverse - reverse_lazy (para class based)
 from django.views import generic
 from django.core.files.storage import default_storage
 
@@ -48,7 +51,7 @@ def store(request, storage_id):
 def upload(request, storage_id):
     storage = get_object_or_404(Storage, pk=storage_id)
 
-    text = "Hi ha hagut un error";
+    text = "Hi ha hagut un error"
     items = []
 
     if request.method == 'POST':
@@ -79,43 +82,91 @@ def upload(request, storage_id):
 
         except MultiValueDictKeyError:
             return JsonResponse({"error_message": "MultiValueDictKeyError"}, safe=False)
+        except json.decoder.JSONDecodeError:
+            return JsonResponse({"error_message": "JSONDecodeError"}, safe=False)
 
 # .replace("\n", "<br>")
-    return JsonResponse({"error_message": text, "items_processed": items }, safe=False)
+    return JsonResponse({"error_message": text, "items_processed": items}, safe=False)
+
 
 @login_required
 def savetiquet(request, storage_id):
     storage = get_object_or_404(Storage, pk=storage_id)
     try:
 
-        if (not len(request.POST["producte"])):
+        if (not len(request.POST['raw-text'])):
             raise KeyError
-        
+
+        total = 0
+        clean_productes = {}
+
+        for i in request.POST.items():
+
+            key = i[0]
+            value = i[1]
+
+            key = key.replace("%5B", "[").replace("%5D", "]")
+            # print(key.replace("%5B", "[").replace("%5D", "]"))
+
+            if key.find("producte") == -1:
+                continue
+
+            id = (re.findall(r'\d+', key)[0])
+            key = (re.findall(r'(name|amount|price|unit)', key)[0])
+
+            if id not in clean_productes.keys():
+                clean_productes[id] = {}
+
+            if key not in clean_productes[id].keys():
+                clean_productes[id][key] = ""
+
+            clean_productes[id][key] = value  # request.POST.get(og_i)
+            if (key == "price"):
+                total += float(value)
 
         tiquet = Ticket.objects.create(
             user=request.user,
             storage=storage,
-            processedText=request.POST['raw-text']
+            total=total,
+            processedText=unquote(request.POST['raw-text']).replace("+", " ")
         )
         tiquet.save()
 
+        print(clean_productes)
 
-        for i in request.POST["producte"]:
-            prod = Product.objects.create(
-                tiquet=tiquet.id
+        for id in clean_productes.keys():
+
+            values = clean_productes[id]
+
+            print(values)
+
+            item = Item.objects.create(
+                storage=storage,
+                user=request.user,
+                name=unquote(values["name"]).replace("+", " "),
+                unit=values["unit"],
+                amount=values["amount"]
             )
+            print(item)
+            item.save()
+
+            prod = Product.objects.create(
+                ticket=tiquet,
+                name=unquote(values["name"]).replace("+", " "),
+                # name_clear=i["unit"],
+                price=float(values["price"])
+            )
+            print(prod)
             prod.save()
 
-        i = Item.objects.create(
-            storage=storage, user=request.user, name=request.POST["name"],
-            amount=int('0'+(request.POST['amount'])), unit=request.POST['unit'])
-        i.save()
+    except KeyError as e:
+        
+        tiquet.delete()
+        return render(request, "grocery/detail.html", {"storage": storage, "unit_choices": Item.UNIT_CHOICES, "error_message": e})
 
-    except (KeyError):
-        return render(request, "grocery/detail.html", {"storage": storage, "unit_choices": Item.UNIT_CHOICES, "error_message": "El producte no te nom i no s'ha introduït"})
+    # return HttpResponseRedirect(url('grocery:detail', storage.id))
+    return HttpResponseRedirect("/grocery/" + storage.id)
 
-    else:
-        return HttpResponseRedirect(url('grocery:detail', storage.id))
 
 @login_required
 def ticket(request, storage_id):

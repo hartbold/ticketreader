@@ -11,11 +11,6 @@
             <input type="submit" class="btn btn-sm btn-success" value="Envia" disabled />
         </div>
         <label id="error" class="text-danger"></label>
-
-        <div class="img-container img-cropper mt-4">
-            <img id="image"/>
-        </div>
-
         <div class="d-none">
             <select title="Unitats" name="" id="select-units" class="form-control">
                 {% for unit in unit_choices %}
@@ -25,9 +20,16 @@
         </div>
     </form>
 
-    <form id="form-result" action="{% url 'grocery:savetiquet' storage.id %}" method="post" class="d-none">
+    <div class="img-container img-cropper">
+        <img id="image" class=""/>
+    </div>
+
+    <div id="img-result-container" class="d-none">
+        <img id="img-result" class="img-fluid" src="{% static 'grocery/ticket_tmp/tiquet.jpg' %}?t={% now 'd' %}" />
+    </div>
+    <form action="{% url 'grocery:savetiquet' storage.id %}" method="post">
+        <div id="form-result"></div>
         {% csrf_token %}
-        <img id="img-result" class="img-fluid d-none" src="{% static 'grocery/ticket_tmp/tiquet.jpg' %}" />
         <textarea id="result" name="raw-text" class="d-none"></textarea>
     </form>
 

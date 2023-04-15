@@ -4,7 +4,7 @@ body.loading{
 }
 
 .container {
-    padding: 5rem calc(var(--bs-gutter-x) * .5);
+    padding: 5rem calc(var(--bs-gutter-x) * .5) 0;
 }
 
 .form-control{
@@ -39,7 +39,7 @@ body.loading{
 
 #loading-frame {
     background: #000000;
-    height: 100vh;
+    height: calc(100vh + 5rem);
     width: 100vw;
     position: absolute;
     z-index: 1;
@@ -65,13 +65,26 @@ body.loading{
     font-weight: bold;
 }
 
+#img-result-container{
+    max-height: 20vh;
+    overflow: auto;
+    margin-bottom: 1rem;
+    /* margin: 1rem; */
+    /* background: red; */
+}
+
+#form-result{
+    max-height: 40vh;
+    overflow: auto;
+}
+
 #img-result{
-    position: fixed;
-    z-index: 1;
-    top: 2rem;
-    width: 80vw;
-    padding: 1rem;
-    background: #d6f3d1;
-    border-radius: .375rem;
-    opacity: 0.9;
+    /* position: fixed; */
+    /*z-index: 1;*/
+    /*top: 2rem;*/
+    /* width: 80vw; */
+    /* padding: 1rem; */
+    /* background: #d6f3d1; */
+    /* border-radius: .375rem; */
+    /* opacity: 0.9; */
 }

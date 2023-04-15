@@ -17,6 +17,7 @@ window.onload = function () {
   var $select = $("#select-units");
   var $form_submit = $("#form-result");
   var $img_result = $("#img-result")
+  var $img_result_container = $("#img-result-container");
 
   // Import image
   var inputImage = document.getElementById('inputImage');
@@ -119,21 +120,23 @@ window.onload = function () {
           var out = "<div><br></div>";
           $.each(e.items_processed.productes, function (i, v) {
             var select = $select[0].outerHTML;
+
+
             out += "<div class='row-producto row mb-1'>"
             out += "<div class='col-12'><label>" + v.producte + "</label></div>";
             out += "<div class='col-9 mb-2 mb-md-0 col-md-6'><input title='Producte' class='form-control' type='text' name='producte[" + i + "][name]' value='" + v.nom_simplificat + "'/></div>"
             out += "<div class='col-3 mb-2 mb-md-0 col-md-2 with-label'><label>#</label><input title='Quantitat' class='form-control' type='number' name='producte[" + i + "][amount]' value='" + v.quantitat + "'/></div>"
-            out += "<div class='col-5 col-md-2'>" + select.replace("name=''", "name='producte[" + i + "][unit]'") + "</div>"
+            out += "<div class='col-5 col-md-2'>" + select.replace('name=""', 'name="producte[' + i + '][unit]"') + "</div>"
             out += "<div class='col-4 col-md-2 with-label'><label>€</label><input title='Preu' class='form-control' type='text' name='producte[" + i + "][price]' value='" + v.preu + "'/></div>"
             out += "</div>";
           });
 
-          out += "<input type='submit' class='mt-3 btn btn-sm btn-success mt-3' value='Desa els productes'/>"
-
           $form_submit.removeClass("d-none");
-          $form_submit.append(out);
+          $form_submit.append($(out));
+          $form_submit.after($("<input type='submit' class='mt-3 btn btn-sm btn-success mt-3' value='Desa els productes'/>"));
 
-          $img_result.removeClass("d-none");
+          $img_result_container.removeClass("d-none");
+          // $img_result.removeClass("d-none");
 
           $(body).removeClass("loading");
 

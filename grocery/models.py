@@ -52,7 +52,7 @@ class Ticket(models.Model):
     storage = models.ForeignKey(Storage, on_delete=models.RESTRICT)
     user = models.ForeignKey(
         User, on_delete=models.RESTRICT, null=True, default=None)
-    total = models.BinaryField()
+    total = models.FloatField()
     processedText = models.CharField(max_length=5000)
     uploaded_at = models.DateTimeField(default=now)
 
@@ -64,4 +64,4 @@ class Product(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
     name = models.CharField(max_length=400)
     name_clear = models.CharField(max_length=400)
-    price = models.BinaryField()
+    price = models.FloatField()
